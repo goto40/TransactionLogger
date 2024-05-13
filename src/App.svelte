@@ -1,9 +1,10 @@
 <script lang="ts">
   import TransactionList from "./lib/TransactionList.svelte";
+  import { version } from "../package.json";
 </script>
 
 <div class="main-screen">
-  <div>Transaction Logger v27</div>
+  <div>Transaction Logger {version}</div>
   <TransactionList />
 </div>
 
