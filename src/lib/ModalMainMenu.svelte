@@ -136,6 +136,7 @@
         <option value="archive">archive</option>
         <option value="export-archive">export archive</option>
         <option value="errors">errors</option>
+        <option value="info">info</option>
       </select>
       <textarea class="main-menu-text" bind:value={text}></textarea>
       <div class="button-bar">
