@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import { serviceWorkerRegistration } from "../main";
   import type { TransactionStore } from "./TransactionStore";
+  import { licenseText } from "./info";
 
   const dispatchClear = createEventDispatcher<{
     clearAndArchive: undefined;
@@ -37,14 +38,15 @@
     showModal = false;
   };
   let what:
+    | "export"
     | "parameters"
+    | "info"
     | "transactions"
     | "categories"
-    | "export"
     | "archive"
     | "locations"
     | "errors"
-    | "export-archive" = "export";
+    | "export-archive" = "info";
   let text: string = "no text";
   $: if (showModal) handleWhat(true);
   const handleWhat = (show: boolean) => {
@@ -55,6 +57,8 @@
     }
     if (what === "transactions") {
       text = transactions.getTransactionsJson();
+    } else if (what === "info") {
+      text = licenseText;
     } else if (what === "categories") {
       text = transactions.getCategoriesJson();
     } else if (what === "export") {
