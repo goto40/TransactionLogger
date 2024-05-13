@@ -1,0 +1,16 @@
+{
+  "name": "Transaction Logger",
+  "short_name": "Transaction Logger",
+  "icons": [
+    {
+      "src": "./chili-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "lang": "en-US",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "white",
+  "theme_color": "white"
+}

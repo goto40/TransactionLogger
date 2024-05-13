@@ -1,0 +1,159 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --transaction-background-color: #113;
+  --transaction-border-color: #555;
+  --info-color: #999;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #62686f;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+form {
+  font-size: 1em;
+  padding: 10px;
+}
+
+.parent-v-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.parent-h-flex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.flex-fill {
+  flex: 1;
+}
+
+input {
+  font-size: 1em;
+  padding: 3px;
+  margin: 10px;
+  width: auto;
+}
+
+select {
+  font-size: 1em;
+  padding: 3px;
+  margin: 10px;
+}
+
+#app {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0rem;
+  text-align: center;
+  background: red;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+}
+
+button {
+  background: #837;
+  color: #ffaaee;
+  border-color: #d9c;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+button:disabled {
+  background: #777;
+  color: #ccc;
+}
+
+.geolocation-info {
+  border-radius: 10px;
+  padding: 10px;
+  color: black;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+}
+
+.backdrop {
+  all: unset;
+  z-index: 99;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog {
+  all: unset;
+  flex: 0;
+  background: var(--transaction-background-color);
+  color: var(--info-color);
+  border-style: double;
+  border-color: var(--transaction-border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.button-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.content {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+}
