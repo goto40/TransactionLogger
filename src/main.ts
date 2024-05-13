@@ -15,7 +15,7 @@ if ('serviceWorker' in navigator) {
       window.location.reload()
     }
   });
-  navigator.serviceWorker.register('/service-worker.js').then(reg=>{
+  navigator.serviceWorker.register('./service-worker.js').then(reg=>{
     serviceWorkerRegistration = reg;
     serviceWorkerRegistration.active?.postMessage('CHECK_FOR_NEW_VERSION');
   })
