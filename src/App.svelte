@@ -3,7 +3,7 @@
 </script>
 
 <div class="main-screen">
-  <div>Transaction Logger v26</div>
+  <div>Transaction Logger v27</div>
   <TransactionList />
 </div>
 
