@@ -18,10 +18,12 @@ export class TransactionStore {
   private errors = new Array<any>();
   private exceptions = new Array<any>();
   private parameters: Parameters = { maxDistance: 150 };
+  private firstTime = false;
   
   constructor(databaseName="transaction-logger") {
     this.transactions = createTransactions(demoTransactions);
     this.storage = window.localStorage;
+    if (this.storage.getItem("transactions")===null) this.firstTime = true;
     this.restoreCategories();
     this.restoreTransactions();
     this.restoreArchive();
@@ -33,6 +35,10 @@ export class TransactionStore {
       self.exceptions.push(e);
       console.log('exception catched', e);
     });
+  }
+
+  isFirstTime(): boolean {
+    return this.firstTime;
   }
 
   restoreParameters() {
@@ -170,6 +176,7 @@ export class TransactionStore {
   }
   storeTransactions() {
     this.storage.setItem('transactions', this.getTransactionsJson());
+    this.firstTime = false;
   }
   restoreTransactions() {
     try {

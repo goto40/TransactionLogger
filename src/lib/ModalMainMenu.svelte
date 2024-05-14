@@ -37,6 +37,7 @@
     //console.log("close menu...");
     showModal = false;
   };
+  export let firstTime;
   let what:
     | "export"
     | "parameters"
@@ -46,7 +47,7 @@
     | "archive"
     | "locations"
     | "errors"
-    | "export-archive" = "info";
+    | "export-archive" = firstTime ? "info" : "export";
   let text: string = "no text";
   $: if (showModal) handleWhat(true);
   const handleWhat = (show: boolean) => {
@@ -58,7 +59,7 @@
     if (what === "transactions") {
       text = transactions.getTransactionsJson();
     } else if (what === "info") {
-      text = licenseText;
+      text = "App: " + window.location.href + "\n" + licenseText;
     } else if (what === "categories") {
       text = transactions.getCategoriesJson();
     } else if (what === "export") {
@@ -155,7 +156,7 @@
           >Reinstall</button
         >
         <button class="internal-button" on:click={() => handleReset()}
-          >Reset {"!".repeat(setCounter)}</button
+          >Reset {"!".repeat(resetCounter)}</button
         >
         <button class="internal-button" on:click={() => handleSkipWaiting()}
           >(Skip)</button

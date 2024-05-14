@@ -12,7 +12,8 @@
   import ModalTransactionNew from "./ModalTransactionNew.svelte";
   import { TransactionStore } from "./TransactionStore";
   let transactions = new TransactionStore();
-  let showMainMenu = false;
+  let firstTime = transactions.isFirstTime();
+  let showMainMenu = firstTime;
   let showNewDialog = false;
   let transactionGroups = transactions.getGroups();
   let categories = transactions.getCategories();
@@ -34,15 +35,18 @@
       e.detail.newTransaction,
     );
     transactionGroups = transactions.getGroups();
+    firstTime = transactions.isFirstTime();
   };
   const transactionDelete = (e: CustomEvent<Transaction>) => {
     transactions.deleteTransaction(e.detail.id);
     transactionGroups = transactions.getGroups();
+    firstTime = transactions.isFirstTime();
   };
   const transactionNew = (e: CustomEvent<NewTransactionEvent>) => {
     transactions.newTransaction(e.detail.newTransaction);
     //console.log("new...");
     transactionGroups = transactions.getGroups();
+    firstTime = transactions.isFirstTime();
     if (e.detail.location !== undefined) {
       transactions.newLocation(e.detail.location);
       knownTransactionLocations = transactions.getLocations();
@@ -78,6 +82,7 @@
   <ModalMainMenu
     bind:showModal={showMainMenu}
     {transactions}
+    {firstTime}
     on:clearAndArchive={() => handleClearAndArchive()}
     on:reset={() => handleReset()}
   />
