@@ -35,6 +35,7 @@
   };
   const handleClose = () => {
     //console.log("close menu...");
+    if (what === "info") what = "export";
     showModal = false;
   };
   export let firstTime;

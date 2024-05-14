@@ -4,7 +4,7 @@ import { type TransactionLocation, TransactionLocationSchema } from './location'
 
 function exportGroups(groups: TransactionGroup[]): string {
   return groups.map(group =>{
-    return `\n// week group ${(group.id %100)+1}\n`+group.transactions.map(t=>`#${t.date.toLocaleDateString("de-DE")} @${t.category} ${t.amount} _${t.info}`).join('\n');
+    return `\n// week group ${(group.id %100)+1}\n`+group.transactions.map(t=>`#${t.date.toLocaleDateString("de-DE")} @${t.category} ${t.amount} ${(t.info.length>0 && !t.info.slice(0,1).match(/[a-z-A-Z]/))?'_':''}${t.info}`).join('\n');
   }).join("\n");
 }
 
