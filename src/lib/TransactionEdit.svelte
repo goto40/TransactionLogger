@@ -24,7 +24,8 @@
 
 <form class="parent-v-flex">
   <div class="parent-h-flex">
-    Date: <input
+    <label for="date">Date:</label>
+    <input
       name="date"
       type="date"
       value={convertDateToHtmlFormat(date)}
@@ -32,7 +33,7 @@
     /><br />
   </div>
   <div class="parent-h-flex">
-    Amount:
+    <label for="amount">Amount:</label>
     <input
       class="amount-input flex-fill"
       bind:this={amountField}
@@ -42,7 +43,7 @@
     />
   </div>
   <div class="category-input parent-h-flex">
-    Category:
+    <label for="category">Category:</label>
     <select class="flex-fill" name="category" bind:value={category} on:click>
       {#each categories as possibleCategory}
         <option value={possibleCategory}>{possibleCategory}</option>
@@ -50,7 +51,7 @@
     </select>
   </div>
   <div class="parent-h-flex">
-    Info:
+    <label for="info">Info:</label>
     <input
       size="5"
       class="flex-fill"
