@@ -176,7 +176,7 @@
         >
         <button
           class="save-button"
-          disabled={isDisabled && here !== undefined}
+          disabled={isDisabled || here === undefined}
           on:click={() => handleSave(true)}>New*</button
         >
         <button
