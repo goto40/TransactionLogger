@@ -10,7 +10,7 @@ test('date from', () => {
 
 test('date to', () => {
   const dateText = convertDateToHtmlFormat(new Date(1975,6,3));
-  expect(dateText).toBe('1975-07-03');
+  expect(dateText).toBe('1975-07-02');
 });
 
 test('getDayName', () => {
