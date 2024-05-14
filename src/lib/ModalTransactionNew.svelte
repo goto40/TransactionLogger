@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import TransactionEdit from "./TransactionEdit.svelte";
   import { type TransactionData } from "./transaction";
   import {
@@ -123,26 +123,34 @@
 
   // setup
 
-  if (navigator.geolocation) {
-    navigator.geolocation.watchPosition((pos) => {
-      const age = (Date.now() - pos.timestamp) / 1000.0;
-      //console.log(`age=${age}, coords=${pos.coords}`);
-      if (age < 60.0) {
-        // age<60, within last minute
-        here = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          altitude: pos.coords.altitude,
-          heading: pos.coords.heading,
-          speed: pos.coords.speed,
-          accuracy: pos.coords.accuracy,
-          altitudeAccuracy: pos.coords.altitudeAccuracy,
-        };
-      } else {
-        here = undefined;
-      }
-    });
-  }
+  let geolocationWatchId: number | undefined = undefined;
+  onMount(() => {
+    if (navigator.geolocation) {
+      geolocationWatchId = navigator.geolocation.watchPosition((pos) => {
+        const age = (Date.now() - pos.timestamp) / 1000.0;
+        //console.log(`age=${age}, coords=${pos.coords}`);
+        if (age < 60.0) {
+          // age<60, within last minute
+          here = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            altitude: pos.coords.altitude,
+            heading: pos.coords.heading,
+            speed: pos.coords.speed,
+            accuracy: pos.coords.accuracy,
+            altitudeAccuracy: pos.coords.altitudeAccuracy,
+          };
+        } else {
+          here = undefined;
+        }
+      });
+    }
+  });
+  onDestroy(() => {
+    if (geolocationWatchId !== undefined && navigator.geolocation) {
+      navigator.geolocation.clearWatch(geolocationWatchId);
+    }
+  });
 </script>
 
 {#if showModal}
@@ -178,6 +186,11 @@
         >
       </div>
       <div class="extra-info">*: save location as well</div>
+      <div class="extra-info">
+        {here !== undefined
+          ? `${here?.latitude}N ${here?.longitude}E`
+          : "no location"}
+      </div>
     </button>
   </button>
 {/if}
