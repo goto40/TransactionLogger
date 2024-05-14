@@ -76,3 +76,10 @@ test('getGroupIdFromDate globally unique weeks', () => {
     date = next(date);
   }
 });
+
+test('regression: weeknumber', () => {
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T00:00:00.000Z'))).toBe(19);
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T11:50:13.027Z'))).toBe(19);
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T23:59:59.999Z'))).toBe(19);
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-13T00:00:00.000Z'))).toBe(20);
+});
