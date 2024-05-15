@@ -233,7 +233,7 @@
           : "no location"}
       </div>
       <div class="location-list">
-        {#each sortLocationList as loc (loc.id)}
+        {#each sortedTransactionLocations as loc (loc.id)}
           <button
             class="entry"
             class:entry-selected={loc.id === selectedLocation?.id}
