@@ -166,6 +166,10 @@ export class TransactionStore {
       this.errors.push([new Date(), "locations format error", e]);
     }
   }
+  deleteLocation(id: number) {
+    this.locations = this.locations.filter(l=>l.id!==id);
+    this.storeLocations();
+  }
  
   setTransactionJson(txt: string) {
     this.storage.setItem('transactions', txt);

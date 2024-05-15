@@ -76,6 +76,10 @@
     transactions.reset();
     transactionGroups = transactions.getGroups();
   };
+  const locationDel = (e: CustomEvent<number>) => {
+    transactions.deleteLocation(e.detail);
+    knownTransactionLocations = transactions.getLocations();
+  };
 </script>
 
 <div class="transaction-list">
@@ -98,6 +102,7 @@
     {maxDistance}
     {knownTransactionLocations}
     on:transactionNew={(e) => transactionNew(e)}
+    on:locationDel={(e) => locationDel(e)}
   />
   {#each transactionGroups as transactionGroup (transactionGroup.id)}
     <TransactionGroupComponent

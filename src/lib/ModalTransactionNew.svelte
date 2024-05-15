@@ -3,6 +3,7 @@
   import TransactionEdit from "./TransactionEdit.svelte";
   import { type TransactionData } from "./transaction";
   import {
+    distanceInMeters,
     findNearestLocationWithMinimumDistanceInMeters,
     type NewTransactionEvent,
     type TransactionLocation,
@@ -13,12 +14,17 @@
   const dispatchNew = createEventDispatcher<{
     transactionNew: NewTransactionEvent;
   }>();
+  const dispatchDel = createEventDispatcher<{
+    locationDel: number;
+  }>();
 
   // props
 
   export let showModal: boolean;
   export let categories: string[];
   export let knownTransactionLocations: TransactionLocation[];
+  let sortedTransactionLocations: TransactionLocation[] =
+    knownTransactionLocations.slice();
 
   // variables
 
@@ -31,6 +37,10 @@
   let isDisabled = true;
   let categoryWasSelected = false;
   export let maxDistance: number;
+  let selectedLocation: TransactionLocation | undefined = undefined;
+  onMount(() => {
+    selectedLocation = undefined;
+  });
 
   // auto variables
 
@@ -48,6 +58,19 @@
     amount === 0 ||
     (info.length === 0 && infoPlaceholder.length === 0) ||
     category.length === 0;
+
+  $: sortLocationList(here, knownTransactionLocations);
+  const sortLocationList = (
+    here: GeolocationCoordinates | undefined,
+    _: TransactionLocation[],
+  ) => {
+    if (here !== undefined && selectedLocation === undefined) {
+      sortedTransactionLocations = knownTransactionLocations.sort(
+        (a, b) =>
+          distanceInMeters(here, a.coords) - distanceInMeters(here, b.coords),
+      );
+    }
+  };
 
   $: infoPlaceholder = computePlaceholder(
     here,
@@ -121,6 +144,16 @@
     showModal = false;
   };
 
+  const handleSelectedLocation = (loc: TransactionLocation) => {
+    selectedLocation = loc;
+    category = loc.category;
+    info = loc.info;
+  };
+
+  const handleLocationDelete = (loc: TransactionLocation) => {
+    dispatchDel("locationDel", loc.id);
+  };
+
   // setup
 
   let geolocationWatchId: number | undefined = undefined;
@@ -151,11 +184,19 @@
       navigator.geolocation.clearWatch(geolocationWatchId);
     }
   });
+  const distance = (loc: TransactionLocation) => {
+    if (here === undefined) return "n/a";
+    else {
+      const d = distanceInMeters(here, loc.coords);
+      if (d < 1000) return d.toFixed(0) + "m";
+      else return (d / 1000).toFixed(1) + "km";
+    }
+  };
 </script>
 
 {#if showModal}
   <button class="backdrop">
-    <button class="dialog">
+    <button class="my-dialog">
       <div>Edit existing Transaction</div>
       <div class="content">
         <TransactionEdit
@@ -191,12 +232,86 @@
           ? `${here?.latitude}N ${here?.longitude}E`
           : "no location"}
       </div>
+      <div class="location-list">
+        {#each knownTransactionLocations as loc (loc.id)}
+          <button
+            class="entry"
+            class:entry-selected={loc.id === selectedLocation?.id}
+            on:click={() => handleSelectedLocation(loc)}
+          >
+            <div class="loc-info">
+              <div class="distance">{distance(loc)}</div>
+              <div class="category">{loc.category}</div>
+              <div class="info">{loc.info}</div>
+            </div>
+            {#if loc.id === selectedLocation?.id}
+              <button class="loc-del" on:click={() => handleLocationDelete(loc)}
+                >&#x274c;</button
+              >
+            {/if}
+          </button>
+        {/each}
+      </div>
     </button>
   </button>
 {/if}
 
 <style>
+  .entry {
+    all: unset;
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: left;
+    align-items: center;
+    font-size: 0.8em;
+    background-color: #010;
+  }
+  .entry-selected {
+    background-color: #121;
+  }
+  .distance {
+    color: #33cc33;
+    font-size: 0.8em;
+  }
+  .category {
+    color: #c9f;
+    padding-left: 10px;
+    font-size: 0.8em;
+  }
+  .info {
+    padding-left: 10px;
+  }
+  .location-list {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    overflow: auto;
+  }
   .extra-info {
     font-size: 0.6em;
+  }
+  .my-dialog {
+    all: unset;
+    flex: 1 0 0;
+    background: var(--transaction-background-color);
+    color: var(--info-color);
+    border-style: double;
+    border-color: var(--transaction-border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  .loc-info {
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: row;
+  }
+  .loc-del {
+    all: unset;
+    color: #aa4;
+    width: 30px;
   }
 </style>
