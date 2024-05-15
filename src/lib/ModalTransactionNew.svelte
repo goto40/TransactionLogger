@@ -60,13 +60,15 @@
   $: sortLocationList(here, knownTransactionLocations);
   const sortLocationList = (
     here: GeolocationCoordinates | undefined,
-    _: TransactionLocation[],
+    t: TransactionLocation[],
   ) => {
     if (here !== undefined && selectedLocation === undefined) {
-      sortedTransactionLocations = knownTransactionLocations.sort(
-        (a, b) =>
-          distanceInMeters(here, a.coords) - distanceInMeters(here, b.coords),
-      );
+      sortedTransactionLocations = t
+        .slice()
+        .sort(
+          (a, b) =>
+            distanceInMeters(here, a.coords) - distanceInMeters(here, b.coords),
+        );
     }
   };
 
@@ -149,6 +151,7 @@
   };
 
   const handleLocationDelete = (loc: TransactionLocation) => {
+    selectedLocation = undefined;
     dispatchDel("locationDel", loc.id);
   };
 
@@ -266,7 +269,7 @@
     flex-wrap: wrap;
     justify-content: left;
     align-items: center;
-    font-size: 1em;
+    font-size: 0.9em;
     background-color: #010;
   }
   .entry-selected {
@@ -274,12 +277,12 @@
   }
   .distance {
     color: #161;
-    font-size: 1em;
+    font-size: 0.9em;
   }
   .category {
     color: #85a;
     padding-left: 10px;
-    font-size: 1em;
+    font-size: 0.9em;
   }
   .info {
     color: #777;

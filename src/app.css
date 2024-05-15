@@ -154,7 +154,7 @@ button:disabled {
 }
 
 .content {
-  flex: 1 0 0;
+  flex: auto 0 0;
   display: flex;
   flex-direction: column;
 }
