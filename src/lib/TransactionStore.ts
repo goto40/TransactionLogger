@@ -148,7 +148,7 @@ export class TransactionStore {
   }
   newLocation(newLocation: TransactionLocationData) {
     const id = this.locations.map(l=>l.id).reduce((a,b)=>(a>b)?a:b, 0);    
-    this.locations.push({id:id, ...newLocation});
+    this.locations.push({id:id+1, ...newLocation});
     this.storeLocations();
   }
   restoreLocations() {
