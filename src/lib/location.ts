@@ -13,11 +13,19 @@ export const GeolocationCoordinatesSchema = z.object({
 });
 export type GeolocationCoordinates = z.infer<typeof GeolocationCoordinatesSchema>;
 
-export const TransactionLocationSchema = z.object({
+export const TransactionLocationDataSchema = z.object({
   coords: GeolocationCoordinatesSchema,
   category: z.string(),
   info: z.string(),
 });
+export const TransactionLocationSchema = z.object({
+  coords: GeolocationCoordinatesSchema,
+  category: z.string(),
+  info: z.string(),
+  id: z.number(),
+});
+
+export type TransactionLocationData = z.infer<typeof TransactionLocationDataSchema>;
 export type TransactionLocation = z.infer<typeof TransactionLocationSchema>;
 
 export function distanceInMeters(coords1: GeolocationCoordinates, coords2: GeolocationCoordinates): number {
@@ -48,5 +56,23 @@ export function findNearestLocation(knownLocations: TransactionLocation[],coords
 
 export interface NewTransactionEvent {
   newTransaction: TransactionData;
-  location: TransactionLocation|undefined;
+  location: TransactionLocationData|undefined;
+}
+
+export function convertTransactionLocationFromData(data: TransactionLocationData[]): TransactionLocation[] {
+  return data.map((d,index)=>{
+    const l: TransactionLocation = {id: index, ...d};
+    return l;
+  });
+}
+
+export function convertTransactionLocationToData(data: TransactionLocation[]): TransactionLocationData[] {
+  return data.map(d=>{
+    const l: TransactionLocationData = {
+      category: d.category,
+      coords: d.coords,
+      info: d.info,
+    };
+    return l;
+  });
 }

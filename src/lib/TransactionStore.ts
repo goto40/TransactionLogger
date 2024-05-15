@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { type TransactionGroup, createTransactionGroups, createTransactions, extractTransactionData, findTransactionGroupForTransaction, type Transaction, type TransactionData, TransactionDataSchema, fixDatesInArray, type Parameters, ParametersSchema } from "./transaction";
-import { type TransactionLocation, TransactionLocationSchema } from './location'
+import { type TransactionLocation, TransactionLocationSchema, TransactionLocationDataSchema, convertTransactionLocationFromData, type TransactionLocationData, convertTransactionLocationToData } from './location'
 
 function exportGroups(groups: TransactionGroup[]): string {
   return groups.map(group =>{
@@ -138,7 +138,7 @@ export class TransactionStore {
     this.restoreLocations();        
   }
   getLocationsJson(): string {
-    return JSON.stringify(this.locations);    
+    return JSON.stringify(convertTransactionLocationToData(this.locations));    
   }
   storeLocations() {
     this.storage.setItem('locations', this.getLocationsJson());
@@ -146,8 +146,9 @@ export class TransactionStore {
   getLocations(): TransactionLocation[] {
     return this.locations;    
   }
-  addLocation(l: TransactionLocation) {
-    this.locations.push(l);
+  newLocation(newLocation: TransactionLocationData) {
+    const id = this.locations.map(l=>l.id).reduce((a,b)=>(a>b)?a:b, 0);    
+    this.locations.push({id:id, ...newLocation});
     this.storeLocations();
   }
   restoreLocations() {
@@ -155,9 +156,9 @@ export class TransactionStore {
       const data = this.storage.getItem('locations');
       if (data!==null) {
         const tmp = JSON.parse(data);
-        const checked = z.array(TransactionLocationSchema).parse(tmp); // throws on error
+        const checked = z.array(TransactionLocationDataSchema).parse(tmp); // throws on error
         console.log('locations ok');
-        this.locations = checked;
+        this.locations = convertTransactionLocationFromData(checked);
       }
     }
     catch(e) {
@@ -240,10 +241,6 @@ export class TransactionStore {
     const groups = this.groups || this.getGroups();
     const group = findTransactionGroupForTransaction(newTransaction, groups);
     if (group!==undefined) group.expanded=true;
-  }
-  newLocation(newLocation: TransactionLocation) {
-    this.locations.push(newLocation);
-    this.storeLocations();
   }
 
   getErrors() {
