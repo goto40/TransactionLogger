@@ -259,13 +259,13 @@
 <style>
   .entry {
     all: unset;
-    flex: 1 0 0;
+    flex: auto 0 0;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: left;
     align-items: center;
-    font-size: 0.8em;
+    font-size: 1em;
     background-color: #010;
   }
   .entry-selected {
@@ -273,12 +273,12 @@
   }
   .distance {
     color: #33cc33;
-    font-size: 0.8em;
+    font-size: 1em;
   }
   .category {
     color: #c9f;
     padding-left: 10px;
-    font-size: 0.8em;
+    font-size: 1em;
   }
   .info {
     padding-left: 10px;
