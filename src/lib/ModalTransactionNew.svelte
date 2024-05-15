@@ -38,9 +38,6 @@
   let categoryWasSelected = false;
   export let maxDistance: number;
   let selectedLocation: TransactionLocation | undefined = undefined;
-  onMount(() => {
-    selectedLocation = undefined;
-  });
 
   // auto variables
 
@@ -52,6 +49,7 @@
       category = "";
       info = "";
       amount = 0;
+      selectedLocation = undefined;
     }
   };
   $: isDisabled =
@@ -184,6 +182,9 @@
       navigator.geolocation.clearWatch(geolocationWatchId);
     }
   });
+  const handleUnselect = () => {
+    selectedLocation = undefined;
+  };
   const distance = (loc: TransactionLocation) => {
     if (here === undefined) return "n/a";
     else {
@@ -195,8 +196,8 @@
 </script>
 
 {#if showModal}
-  <button class="backdrop">
-    <button class="my-dialog">
+  <button class="backdrop" on:click|self={() => handleUnselect()}>
+    <button class="my-dialog" on:click|self={() => handleUnselect()}>
       <div>Edit existing Transaction</div>
       <div class="content">
         <TransactionEdit
@@ -269,18 +270,19 @@
     background-color: #010;
   }
   .entry-selected {
-    background-color: #121;
+    background-color: #324;
   }
   .distance {
-    color: #33cc33;
+    color: #161;
     font-size: 1em;
   }
   .category {
-    color: #c9f;
+    color: #85a;
     padding-left: 10px;
     font-size: 1em;
   }
   .info {
+    color: #777;
     padding-left: 10px;
   }
   .location-list {
