@@ -199,8 +199,8 @@
 </script>
 
 {#if showModal}
-  <button class="backdrop" on:click|self={() => handleUnselect()}>
-    <button class="my-dialog" on:click|self={() => handleUnselect()}>
+  <button class="backdrop" on:click={() => handleUnselect()}>
+    <button class="my-dialog">
       <div>Edit existing Transaction</div>
       <div class="content">
         <TransactionEdit
@@ -241,7 +241,7 @@
           <button
             class="entry"
             class:entry-selected={loc.id === selectedLocation?.id}
-            on:click={() => handleSelectedLocation(loc)}
+            on:click|stopPropagation={() => handleSelectedLocation(loc)}
           >
             <div class="loc-info">
               <div class="distance">{distance(loc)}</div>
@@ -249,8 +249,9 @@
               <div class="info">{loc.info}</div>
             </div>
             {#if loc.id === selectedLocation?.id}
-              <button class="loc-del" on:click={() => handleLocationDelete(loc)}
-                >&#x274c;</button
+              <button
+                class="loc-del"
+                on:click|once={() => handleLocationDelete(loc)}>&#x274c;</button
               >
             {/if}
           </button>
@@ -273,7 +274,10 @@
     background-color: #010;
   }
   .entry-selected {
-    background-color: #324;
+    background-color: #020;
+    border-style: solid;
+    border-color: #4d4;
+    border-width: 1px;
   }
   .distance {
     color: #161;
