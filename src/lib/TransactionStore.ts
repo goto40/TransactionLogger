@@ -306,9 +306,8 @@ export class TransactionStore {
         }
       }
       else if (what === 'archive') {
-        const tmp = JSON.parse(data.archive);
         try {
-          const tmp = JSON.parse(data);
+          const tmp = JSON.parse(data.archive);
           tmp.forEach(fixDatesInArray);
           z.array(z.array(TransactionDataSchema)).parse(tmp); // throws on error
         }

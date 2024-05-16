@@ -100,6 +100,7 @@
       }
       if (error === undefined) {
         showModal = false;
+        window.location.reload();
       } else {
         restoreError = error;
         console.log(error);
