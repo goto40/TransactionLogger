@@ -24,6 +24,7 @@
     dispatchClear("clearAndArchive", undefined);
     showModal = false;
   };
+  let restoreCounter = 0;
   let resetCounter = 0;
   let setCounter = 0;
   const handleReset = () => {
@@ -54,6 +55,7 @@
   const handleWhat = (show: boolean) => {
     resetCounter = 0;
     setCounter = 0;
+    restoreCounter = 0;
     if (show && transactions.getErrors().length > 0) {
       what = "errors";
     }
@@ -77,6 +79,21 @@
       text = transactions.getParametersJson();
     } else {
       text = "???";
+    }
+  };
+  const handleBackup = () => {
+    transactions.backupDataToClipboard();
+  };
+  const handleRestore = async () => {
+    restoreCounter += 1;
+    if (restoreCounter > 3) {
+      restoreCounter = 0;
+      const error = await transactions.restoreDataFromClipboard();
+      if (error === undefined) {
+        showModal = false;
+      } else {
+        console.log(error);
+      }
     }
   };
   const handleSet = () => {
@@ -150,6 +167,15 @@
           >Get</button
         >
         <button on:click={() => handleClose()}>Close</button>
+      </div>
+      <div>Backup from/to Clipboard</div>
+      <div class="button-bar">
+        <button class="internal-button" on:click={() => handleBackup()}
+          >Backup</button
+        >
+        <button class="internal-button" on:click={() => handleRestore()}
+          >Restore {"!".repeat(restoreCounter)}</button
+        >
       </div>
       <div>Internal</div>
       <div class="button-bar">

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { object, z } from "zod";
 import { type TransactionGroup, createTransactionGroups, createTransactions, extractTransactionData, findTransactionGroupForTransaction, type Transaction, type TransactionData, TransactionDataSchema, fixDatesInArray, type Parameters, ParametersSchema } from "./transaction";
 import { type TransactionLocation, TransactionLocationSchema, TransactionLocationDataSchema, convertTransactionLocationFromData, type TransactionLocationData, convertTransactionLocationToData } from './location'
 
@@ -233,7 +233,8 @@ export class TransactionStore {
     this.storage.removeItem('archive');
     this.storage.removeItem('transactions');
     this.storage.removeItem('locations');
-    //this.storage.removeItem('categories');
+    this.storage.removeItem('locations');
+    this.storage.removeItem('categories');
     this.transactions = []
     this.locations = []
   }
@@ -261,6 +262,89 @@ export class TransactionStore {
 
   getExceptionText(): string {
     return this.exceptions.map(e=>`${e}`).join("\n\n");
+  }
+
+  backupDataToClipboard(): void {
+    const data: any = {};
+    const backupTransactions = this.storage.getItem('transactions');
+    const backupParameters = this.storage.getItem('parameters');
+    const backupArchive = this.storage.getItem('archive');
+    const backupCategories = this.storage.getItem('categories');
+    const backupLocations = this.storage.getItem('locations');
+    if (backupTransactions!==null) data.transactions = backupTransactions;
+    if (backupParameters!==null) data.parameters = backupParameters;
+    if (backupArchive!==null) data.archive = backupArchive;
+    if (backupCategories!==null) data.categories = backupCategories;
+    if (backupLocations!==null) data.locations = backupLocations;
+    navigator.clipboard.writeText(JSON.stringify(data));
+  }
+
+  /** returns an error string if there is a problem */
+  async restoreDataFromClipboard(): Promise<undefined|string> {
+    const text = await navigator.clipboard.readText();
+    const data = JSON.parse(text);
+    if (typeof data !== "object") return "problem parsing the text";
+    for (let what of Object.keys(data)) {
+      console.log('-->'+what);
+      if (what === 'categories') {
+        try {
+          const tmp = JSON.parse(data.categories);
+          z.array(z.string()).parse(tmp); // throws on error
+        }
+        catch {
+          return `problem parsing ${what}`;
+        }
+      }
+      else if (what === 'transactions') {
+        try {
+          const tmp = JSON.parse(data.transactions);
+          fixDatesInArray(tmp)
+          z.array(TransactionDataSchema).parse(tmp); // throws on error
+        }
+        catch {
+          return `problem parsing ${what}`;
+        }
+      }
+      else if (what === 'archive') {
+        const tmp = JSON.parse(data.archive);
+        try {
+          const tmp = JSON.parse(data);
+          tmp.forEach(fixDatesInArray);
+          z.array(z.array(TransactionDataSchema)).parse(tmp); // throws on error
+        }
+        catch {
+          return `problem parsing ${what}`;
+        }
+      }
+      else if (what === 'locations') {
+        try {
+          const tmp = JSON.parse(data.locations);
+          z.array(TransactionLocationDataSchema).parse(tmp); // throws on error
+        }
+        catch {
+          return `problem parsing ${what}`;
+        }
+      }
+      else if (what === 'parameters') {
+        try {
+          const tmp = JSON.parse(data.parameters);
+          ParametersSchema.parse(tmp); // throws on error
+        }
+        catch {
+          return `problem parsing ${what}`;
+        }
+      }
+      else {
+        return `found unknown field ${what}`
+      }
+      console.log('done...'+what);
+    }
+    if (data.categories) this.storage.setItem('categories', data.categories);
+    if (data.transactions) this.storage.setItem('transactions', data.transactions);
+    if (data.archive) this.storage.setItem('archive', data.archive);  
+    if (data.locations) this.storage.setItem('locations', data.locations);  
+    if (data.parameters) this.storage.setItem('parameters', data.parameters);  
+    return undefined;
   }
 }
 
