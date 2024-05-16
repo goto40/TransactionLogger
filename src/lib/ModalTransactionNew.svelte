@@ -53,11 +53,11 @@
       selectedLocation = undefined;
     }
   };
-  $: isStoreLocationDisabled =
+  $: isStoreLocationDisabled = info.length === 0 || category.length === 0;
+  $: isStoreDisabled =
+    amount === 0 ||
     (info.length === 0 && infoPlaceholder.length === 0) ||
     category.length === 0;
-
-  $: isStoreDisabled = amount === 0 || isStoreLocationDisabled;
 
   $: sortLocationList(here, knownTransactionLocations);
   const sortLocationList = (
