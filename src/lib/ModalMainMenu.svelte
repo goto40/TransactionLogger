@@ -27,6 +27,7 @@
   let restoreCounter = 0;
   let resetCounter = 0;
   let setCounter = 0;
+  let restoreError = "";
   const handleReset = () => {
     resetCounter += 1;
     if (resetCounter > 3) {
@@ -81,6 +82,9 @@
       text = "???";
     }
   };
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+  };
   const handleBackup = () => {
     transactions.backupDataToClipboard();
   };
@@ -88,10 +92,16 @@
     restoreCounter += 1;
     if (restoreCounter > 3) {
       restoreCounter = 0;
-      const error = await transactions.restoreDataFromClipboard();
+      let error: string | undefined;
+      try {
+        error = await transactions.restoreDataFromClipboard();
+      } catch (e) {
+        error = `${e}`;
+      }
       if (error === undefined) {
         showModal = false;
       } else {
+        restoreError = error;
         console.log(error);
       }
     }
@@ -160,8 +170,10 @@
       <textarea class="main-menu-text" bind:value={text}></textarea>
       <div class="button-bar">
         <button on:click={() => handleClear()}>Archive</button>
-        <button disabled={!isEditable(what)} on:click={() => handleSet()}
-          >Set{"!".repeat(setCounter)}</button
+        <button
+          class="internal-button"
+          disabled={!isEditable(what)}
+          on:click={() => handleSet()}>Set{"!".repeat(setCounter)}</button
         >
         <button disabled={!isEditable(what)} on:click={() => handleGet()}
           >Get</button
@@ -170,13 +182,15 @@
       </div>
       <div>Backup from/to Clipboard</div>
       <div class="button-bar">
-        <button class="internal-button" on:click={() => handleBackup()}
-          >Backup</button
-        >
+        <button on:click={() => handleCopy()}>Copy</button>
+        <button on:click={() => handleBackup()}>Backup</button>
         <button class="internal-button" on:click={() => handleRestore()}
           >Restore {"!".repeat(restoreCounter)}</button
         >
       </div>
+      {#if restoreError.length > 0}
+        <div class="error-text">{restoreError}</div>
+      {/if}
       <div>Internal</div>
       <div class="button-bar">
         <button class="internal-button" on:click={() => handleUpdateApp()}
@@ -214,5 +228,8 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
+  }
+  .error-text {
+    color: red;
   }
 </style>
