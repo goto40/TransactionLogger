@@ -176,6 +176,7 @@
     flex: 1 0 0;
     margin-bottom: 10px;
     overflow: auto;
+    min-height: 80px;
   }
   .my-dialog {
     all: unset;
