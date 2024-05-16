@@ -34,7 +34,8 @@
   let amount: number = 0;
   let here: GeolocationCoordinates | undefined;
   let infoPlaceholder = "";
-  let isDisabled = true;
+  let isStoreDisabled = true;
+  let isStoreLocationDisabled = true;
   let categoryWasSelected = false;
   export let maxDistance: number;
   let selectedLocation: TransactionLocation | undefined = undefined;
@@ -52,10 +53,11 @@
       selectedLocation = undefined;
     }
   };
-  $: isDisabled =
-    amount === 0 ||
+  $: isStoreLocationDisabled =
     (info.length === 0 && infoPlaceholder.length === 0) ||
     category.length === 0;
+
+  $: isStoreDisabled = amount === 0 || isStoreLocationDisabled;
 
   $: sortLocationList(here, knownTransactionLocations);
   const sortLocationList = (
@@ -139,9 +141,9 @@
           newTransaction: newTransaction,
           location: undefined,
         });
+        showModal = false;
       }
     }
-    showModal = false;
   };
 
   const handleSelectedLocation = (loc: TransactionLocation) => {
@@ -221,12 +223,12 @@
         >
         <button
           class="save-button"
-          disabled={isDisabled || here === undefined}
-          on:click={() => handleSave(true)}>New*</button
+          disabled={isStoreLocationDisabled || here === undefined}
+          on:click={() => handleSave(true)}>+ &#x1F4CD;</button
         >
         <button
           class="save-button"
-          disabled={isDisabled}
+          disabled={isStoreDisabled}
           on:click={() => handleSave(false)}>New</button
         >
       </div>

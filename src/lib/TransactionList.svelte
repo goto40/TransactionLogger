@@ -43,13 +43,14 @@
     firstTime = transactions.isFirstTime();
   };
   const transactionNew = (e: CustomEvent<NewTransactionEvent>) => {
-    transactions.newTransaction(e.detail.newTransaction);
-    //console.log("new...");
-    transactionGroups = transactions.getGroups();
     firstTime = transactions.isFirstTime();
     if (e.detail.location !== undefined) {
       transactions.newLocation(e.detail.location);
       knownTransactionLocations = transactions.getLocations();
+    } else {
+      transactions.newTransaction(e.detail.newTransaction);
+      //console.log("new...");
+      transactionGroups = transactions.getGroups();
     }
   };
   const handleMainMenuButton = () => {
