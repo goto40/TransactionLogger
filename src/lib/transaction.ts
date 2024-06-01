@@ -36,6 +36,12 @@ export function getDayOfWeek0(d: Date) : number {
   return day;
 }
 
+export function getDayOfYear(d: Date): number {
+  const yearStart = new Date(new Date(d.getFullYear(),0,1));
+  const dayOfYear = Math.floor((d.getTime()-yearStart.getTime()) / (1000*60*60*24));
+  return dayOfYear;
+}
+
 export function getWeekNumber0(d: Date) : number {
   const yearStart = new Date(new Date(d.getFullYear(),0,1));
   const nextYearStart = new Date(new Date(d.getFullYear()+1,0,1));
@@ -43,8 +49,8 @@ export function getWeekNumber0(d: Date) : number {
   const yearStartDay = getDayOfWeek0(yearStart);
   const nextYearStartDay = getDayOfWeek0(nextYearStart);
   //console.log(`${yearStart.getFullYear()} -> start day ${yearStartDay}`);
-  const dayOfYear = Math.round((d.getTime()-yearStart.getTime()) / (1000*60*60*24));
-  const daysUntilNextYear = Math.round((nextYearStart.getTime()-d.getTime()) / (1000*60*60*24));
+  const dayOfYear = getDayOfYear(d);
+  //const daysUntilNextYear = Math.round((nextYearStart.getTime()-d.getTime()) / (1000*60*60*24));
 
   const delta = (yearStartDay<4)?yearStartDay:(-(7-yearStartDay)%7);
   const result = Math.floor((dayOfYear+delta)/7);
@@ -135,8 +141,8 @@ export function createTransactionGroups(transactions: Transaction[], groups?: Tr
     }
   });
   result.forEach(group=>{
-    group.transactions.sort((a,b)=>a.id-b.id);
-  })
+    group.transactions.sort((a,b)=>a.date.getTime()-b.date.getTime());
+  });
   result.sort((a,b)=>a.id-b.id);
   if (groups!==undefined) {
     result.forEach(group=>{
@@ -158,6 +164,16 @@ export function createTransactionGroups(transactions: Transaction[], groups?: Tr
 }
 
 export function convertDateToHtmlFormat(date: Date): string {
+  // const year = date.getFullYear();
+  // const day = (date.getDate()).toString().padStart(2, "0");
+  // const month = (date.getMonth()+1).toString().padStart(2, "0");
+  // const result = `${year}-${month}-${day}`;
+  // //console.log(date, "->", result," ", month, " from ", date);
+  // return result;
+  return date.toISOString();
+}
+
+export function convertDateToSimplLocalHtmlFormat(date: Date): string {
   const year = date.getFullYear();
   const day = (date.getDate()).toString().padStart(2, "0");
   const month = (date.getMonth()+1).toString().padStart(2, "0");
@@ -167,13 +183,14 @@ export function convertDateToHtmlFormat(date: Date): string {
 }
 
 export function convertHtmlFormatToDate(html: string): Date {
-  if (html.length<10) throw new Error(`bad date format: ${html}`);
-  const year = Number.parseInt(html.slice(0,4));
-  const month = Number.parseInt(html.slice(5,8))-1;
-  const day = Number.parseInt(html.slice(8,10));
-  const result = new Date(new Date(year,month, day));
-  //console.log("back ",result, " ",year, " ", month, " ", day);
-  return result;
+  // if (html.length<10) throw new Error(`bad date format: ${html}`);
+  // const year = Number.parseInt(html.slice(0,4));
+  // const month = Number.parseInt(html.slice(5,8))-1;
+  // const day = Number.parseInt(html.slice(8,10));
+  // const result = new Date(new Date(year,month, day));
+  // //console.log("back ",result, " ",year, " ", month, " ", day);
+  // return result;
+  return new Date(html);
 }
 
 export function extractTransactionData(data: Transaction[]): TransactionData[] {

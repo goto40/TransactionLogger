@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import {
-    convertDateToHtmlFormat,
+    convertDateToSimplLocalHtmlFormat,
     convertHtmlFormatToDate,
   } from "./transaction";
   export let date: Date;
@@ -28,7 +28,7 @@
     <input
       name="date"
       type="date"
-      value={convertDateToHtmlFormat(date)}
+      value={convertDateToSimplLocalHtmlFormat(date)}
       on:change={(e) => handleDate(e)}
     /><br />
   </div>

@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest';
-import { convertDateToHtmlFormat, convertHtmlFormatToDate, getDayName, getGroupIdFromDate, getWeekNumber, getWeekNumber0 } from './transaction';
+import { convertDateToHtmlFormat, convertDateToSimplLocalHtmlFormat, convertHtmlFormatToDate, getDayName, getDayOfYear, getGroupIdFromDate, getWeekNumber, getWeekNumber0 } from './transaction';
 
 test('date from', () => {
   const date = convertHtmlFormatToDate('2024-01-15');
@@ -10,7 +10,9 @@ test('date from', () => {
 
 test('date to', () => {
   const dateText = convertDateToHtmlFormat(new Date(1975,6,3));
-  expect(dateText).toBe('1975-07-03');
+  expect(dateText).toBe('1975-07-02T23:00:00.000Z');
+  const dateTextSimple = convertDateToSimplLocalHtmlFormat(new Date(1975,6,3));
+  expect(dateTextSimple).toBe('1975-07-03');
 });
 
 test('getDayName', () => {
@@ -78,8 +80,35 @@ test('getGroupIdFromDate globally unique weeks', () => {
 });
 
 test('regression: weeknumber', () => {
+  expect(new Date(2024,4,12,23,59,59).getDate()).toBe(12);
+  expect(new Date(new Date(2024,4,12,23,59,59).toString()).getDate()).toBe(12);
+  expect(new Date(JSON.parse(JSON.stringify(new Date(2024,4,12,23,59,59)))).getDate()).toBe(12);
+
+  expect(convertHtmlFormatToDate('2024-05-12T00:00:00.000').getDate()).toBe(12);
+  expect(convertHtmlFormatToDate('2024-05-12T12:00:00.000').getDate()).toBe(12);
+  expect(convertHtmlFormatToDate('2024-05-12T23:59:59.000').getDate()).toBe(12);
+  expect(convertHtmlFormatToDate('2024-05-13T00:00:00.000').getDate()).toBe(13);
+
+  expect(convertHtmlFormatToDate(convertDateToHtmlFormat(convertHtmlFormatToDate('2024-05-12T20:00:00.000Z'))).getDate()).toBe(12);
+
+  expect(getDayOfYear(convertHtmlFormatToDate('2024-01-01T11:50:13.027Z')))
+    .toBe(getDayOfYear(convertHtmlFormatToDate('2024-01-01T22:59:59.999Z')));
+  expect(getDayOfYear(convertHtmlFormatToDate('2024-01-01T04:00:00.000Z')))
+    .toBe(getDayOfYear(convertHtmlFormatToDate('2024-01-01T20:59:59.999Z')));
+
+  expect(getDayOfYear(convertHtmlFormatToDate('2024-05-12T11:50:13.027Z')))
+    .toBe(getDayOfYear(convertHtmlFormatToDate('2024-05-12T22:59:59.999Z')));
+  expect(getDayOfYear(convertHtmlFormatToDate('2024-05-12T04:00:00.000Z')))
+    .toBe(getDayOfYear(convertHtmlFormatToDate('2024-05-12T20:59:59.999Z')));
+
   expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T00:00:00.000Z'))).toBe(19);
   expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T11:50:13.027Z'))).toBe(19);
-  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T23:59:59.999Z'))).toBe(19);
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-12T22:59:59.999Z'))).toBe(19); // GMT
   expect(getWeekNumber(convertHtmlFormatToDate('2024-05-13T00:00:00.000Z'))).toBe(20);
+
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-20T18:58:06.405Z'))).toBe(21);
+  expect(getWeekNumber(convertHtmlFormatToDate('2024-05-19T18:58:06.405Z'))).toBe(20);
+
+  expect(getGroupIdFromDate(convertHtmlFormatToDate('2024-05-20T18:58:06.405Z'))).toBe(getGroupIdFromDate(convertHtmlFormatToDate('2024-05-19T18:58:06.405Z'))+1);  
+  expect(getGroupIdFromDate(convertHtmlFormatToDate('2024-05-16T18:24:18.708Z'))).toBe(getGroupIdFromDate(convertHtmlFormatToDate('2024-05-19T18:58:06.405Z')));  
 });
