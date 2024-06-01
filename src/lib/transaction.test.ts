@@ -10,7 +10,7 @@ test('date from', () => {
 
 test('date to', () => {
   const dateText = convertDateToHtmlFormat(new Date(Date.UTC(1975,6,3)));
-  expect(dateText).toBe('1975-07-03T23:00:00.000Z');
+  expect(dateText).toBe('1975-07-03T00:00:00.000Z');
   const dateTextSimple = convertDateToSimplLocalHtmlFormat(new Date(1975,6,3));
   expect(dateTextSimple).toBe('1975-07-03');
 });
