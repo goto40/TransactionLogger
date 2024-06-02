@@ -3,7 +3,7 @@
   import {
     getDayName,
     getEndDateOfGroup,
-    getExtendedSummaryText,
+    getExtendedSummary,
     getGroupWeekNumber,
     getStartDateOfGroup,
     type Transaction,
@@ -81,7 +81,12 @@
       ..
       {getEndDateOfGroup(transactionGroup).toLocaleDateString("de-DE")}
       <br />
-      {getExtendedSummaryText(transactionGroup)}
+      {#each getExtendedSummary(transactionGroup) as [category, amount]}
+        <div class="summary-line">
+          <div class="transaction-amount">{amount.toFixed(2)}€</div>
+          <div class="transaction-category">{category}&nbsp;</div>
+        </div>
+      {/each}
     </button>
   {/if}
 </div>
@@ -151,6 +156,12 @@
     display: flex;
     flex: 1 0 0;
     flex-direction: column;
+  }
+  .summary-line {
+    font-size: 0.7em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
   .transaction-line {
     display: flex;

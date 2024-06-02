@@ -87,9 +87,14 @@ export function getEndDateOfGroup(group: TransactionGroup): Date {
   return new Date(getStartDateOfGroup(group).getTime()+6*24*60*60*1000);
 }
 
-export function getExtendedSummaryText(group: TransactionGroup): string {
-  const sum = group.transactions.reduce((prev, t) => prev+t.amount, 0);
-  return `${group.transactions.length} entries, total: ${sum.toFixed(2)}€`;
+export function getExtendedSummary(group: TransactionGroup): [string,number][] {
+  // const sum = group.transactions.reduce((prev, t) => prev+t.amount, 0);
+  // return `${group.transactions.length} entries, total: ${sum.toFixed(2)}€`;
+  const categories = Array.from(new Set(group.transactions.map(t=>t.category))).sort();
+  const sum = (c: string) => {
+    return group.transactions.filter(t=>t.category===c).reduce((prev, t) => prev+t.amount, 0);
+  };
+  return categories.map(c=>[c,sum(c)]);
 }
 
 export function getGroupIdFromDate(date: Date) : number {
