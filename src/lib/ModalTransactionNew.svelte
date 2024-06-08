@@ -147,6 +147,7 @@
   };
 
   const handleSelectedLocation = (loc: TransactionLocation) => {
+    categoryWasSelected = true;
     selectedLocation = loc;
     category = loc.category;
     info = loc.info;
