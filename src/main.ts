@@ -2,6 +2,7 @@ import './app.css'
 import App from './App.svelte'
 
 export let serviceWorkerRegistration: ServiceWorkerRegistration|undefined = undefined;
+export let serviceWorkerVersion = 'unknown';
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener("message", (event) => {
@@ -13,6 +14,10 @@ if ('serviceWorker' in navigator) {
     if (event.data === 'RESTART') {
       console.log('restart page');
       window.location.reload()
+    }
+    if (`${event.data}`.startsWith('HELLO. ')) {
+      console.log('version received', event.data);
+      serviceWorkerVersion = `${event.data}`.substring(7);
     }
   });
   navigator.serviceWorker.register('./service-worker.js').then(reg=>{

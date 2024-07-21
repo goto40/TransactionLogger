@@ -2,6 +2,7 @@
 
 (function (self: ServiceWorkerGlobalScope) { // hard cast; https://github.com/microsoft/TypeScript/issues/14877
 
+const serviceWorkerVersion = 'V1';
 const cacheName = 'transaction-logger';
 const filesToCache = [
   './',
@@ -72,7 +73,8 @@ self.addEventListener('message', (event) => {
     );    
   }
   else if (event.data === 'CHECK_FOR_NEW_VERSION') {
-    console.log('service-worker: check for new version');
+    event.source?.postMessage(`HELLO. ${serviceWorkerVersion}`);        
+    console.log(`service-worker: check for new version (sw: ${serviceWorkerVersion})`);
     if (event.source!==null) {
       checkForUpdates(event.source);
     }

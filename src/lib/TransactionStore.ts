@@ -187,7 +187,7 @@ export class TransactionStore {
     try {
       const data = this.storage.getItem('transactions');
       if (data!==null) {
-        console.log(`transactions json == "${data}"`);
+        //console.log(`transactions json == "${data}"`);
         const tmp = <Array<object>>JSON.parse(data);
         fixDatesInArray(tmp)
         const checked = z.array(TransactionDataSchema).parse(tmp); // throws on error

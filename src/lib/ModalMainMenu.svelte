@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { serviceWorkerRegistration } from "../main";
+  import { serviceWorkerRegistration, serviceWorkerVersion } from "../main";
   import type { TransactionStore } from "./TransactionStore";
   import { licenseText } from "./info";
 
@@ -63,7 +63,12 @@
     if (what === "transactions") {
       text = transactions.getTransactionsJson();
     } else if (what === "info") {
-      text = "App: " + window.location.href + "\n" + licenseText;
+      text =
+        "App: " +
+        window.location.href +
+        "\n" +
+        `service worker version: ${serviceWorkerVersion}\n` +
+        licenseText;
     } else if (what === "categories") {
       text = transactions.getCategoriesJson();
     } else if (what === "export") {
