@@ -12,7 +12,7 @@
   export let amountText: string = `${amount}`;
   export let infoPlaceholder: string;
   let amountField: HTMLInputElement;
-  $: amount = Number(amountText);
+  $: amount = Number(amountText.replace(",", "."));
   export let valueOk = true;
 
   onMount(() => {
@@ -25,9 +25,12 @@
   };
 
   const checkNumber = (e: Event) => {
-    if (amountField.checkValidity()) {
+    const pattern = /^[0-9]+([\.,][0-9]+)?$/;
+    if (pattern.test(amountField.value)) {
+      console.log(`"${amountField.value}" ok`);
       valueOk = true;
     } else {
+      console.log(`"${amountField.value}" not ok`);
       valueOk = false;
     }
   };
@@ -50,7 +53,7 @@
       bind:this={amountField}
       name="amount"
       type="text"
-      pattern="[0-9]+([\.,][0-9]+)?"
+      inputmode="numeric"
       bind:value={amountText}
       on:keyup={checkNumber}
     />
