@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import {
     convertDateToSimplLocalHtmlFormat,
     convertHtmlFormatToDate,
@@ -9,8 +9,11 @@
   export let categories: string[];
   export let info: string;
   export let amount: number;
+  export let amountText: string = `${amount}`;
   export let infoPlaceholder: string;
   let amountField: HTMLInputElement;
+  $: amount = Number(amountText);
+  export let valueOk = true;
 
   onMount(() => {
     amountField.focus();
@@ -19,6 +22,14 @@
 
   const handleDate = (e: Event) => {
     date = convertHtmlFormatToDate((<HTMLInputElement>e.target).value);
+  };
+
+  const checkNumber = (e: Event) => {
+    if (amountField.checkValidity()) {
+      valueOk = true;
+    } else {
+      valueOk = false;
+    }
   };
 </script>
 
@@ -38,8 +49,10 @@
       class="amount-input flex-fill"
       bind:this={amountField}
       name="amount"
-      type="number"
-      bind:value={amount}
+      type="text"
+      pattern="[0-9]+([\.,][0-9]+)?"
+      bind:value={amountText}
+      on:keyup={checkNumber}
     />
   </div>
   <div class="category-input parent-h-flex">

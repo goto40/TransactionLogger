@@ -54,10 +54,12 @@
     }
   };
   $: isStoreLocationDisabled = info.length === 0 || category.length === 0;
+  let valueOk = true;
   $: isStoreDisabled =
     amount === 0 ||
     (info.length === 0 && infoPlaceholder.length === 0) ||
-    category.length === 0;
+    category.length === 0 ||
+    !valueOk;
 
   $: sortLocationList(here, knownTransactionLocations);
   const sortLocationList = (
@@ -212,6 +214,7 @@
           {categories}
           bind:info
           bind:amount
+          bind:valueOk
           {infoPlaceholder}
           on:click={() => {
             categoryWasSelected = true;

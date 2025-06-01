@@ -70,7 +70,9 @@
     transaction = undefined;
   };
   let isDisabled = true;
-  $: isDisabled = amount === 0 || info.length === 0 || category.length === 0;
+  let valueOk = true;
+  $: isDisabled =
+    amount === 0 || info.length === 0 || category.length === 0 || !valueOk;
 </script>
 
 {#if transaction !== undefined}
@@ -84,6 +86,7 @@
           {categories}
           bind:info
           bind:amount
+          bind:valueOk
           infoPlaceholder={"what did you spend money on?"}
         />
       </div>
